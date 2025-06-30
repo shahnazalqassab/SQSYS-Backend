@@ -79,11 +79,11 @@ const Login = async (req, res) => {
 // UPDATE USER
 const UpdateDetails = async (req, res) => {
 
-    const { name, email } = req.body
+    const { _id, name, email } = req.body
 
     try {
         const user = await User.findByIdAndUpdate(
-            req.body._id, { name, email },
+            _id , { name, email },
             { new: true }) // RETURNS THE UPDATED DOCUMENT
         
         await user.save()
@@ -96,7 +96,26 @@ const UpdateDetails = async (req, res) => {
 }
 
 // RESET PASSWORD
+const ResetPassword = async (req, res) => {
+    const { _id } = req.body
+    
+    const password = "12345678"
 
+    try {
+        let hashedPassword = await middleware.passwordHashing(password)
+
+        const user = await User.findByIdAndUpdate(
+            _id, { password: hashedPassword },
+            { new: true })
+        
+        await user.save()
+        res.status(200).send({ status: 'Success', message: 'Password reset successfully', user })
+    
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({ status: 'Error', message: 'An error has occurred while resetting password' })
+    }
+}
 
 
 // Activate/Deactivate User
@@ -117,6 +136,7 @@ module.exports = {
     GetUserById,
     Login,
     UpdateDetails,
+    ResetPassword,
     ActivateDeactivate,
     CheckSession
 }
