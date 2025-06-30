@@ -17,8 +17,13 @@
     - customers
     - sales
     - purchase_orders
-    - service_request
+    - service_requests
     - quotations
 
+## Pseudo code 
+
+-
+
 ## Future Improvements:
+
 -   Adding rentals module
