@@ -1,11 +1,12 @@
 const { Schema } = require('mongoose')
 
 const userSchema = new Schema({
+    username: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     email: { type: String, required: true }, 
     password: { type: String, required: true },
-    category: { type: String, enum: ['admin', ' salesperson', 'supervisor', 'inventory manager']},
-    status: { type: String, enum: ['active', 'inactive'], default: 'inactive' },
+    user_role: { type: String, enum: ['admin', ' salesperson', 'inventory staff']},
+    status: { type: String, enum: ['active', 'inactive'], default: 'active' },
 },
 {
     timestamps: true
