@@ -9,16 +9,16 @@
     - CRUD APIs for all collections
 
 -	MongoDB Collections
-o	users
-o	products
-o	main_categories
-o	sub_categories
-o	suppliers
-o	customers
-o	sales
-o	purchase_orders
-o	service_request
-o	quotations
-o	Rentals (optional)
+    - users
+    - products
+    - main_categories
+    - sub_categories
+    - suppliers
+    - customers
+    - sales
+    - purchase_orders
+    - service_request
+    - quotations
 
-## 
+## Future Improvements:
+-   Adding rentals module
