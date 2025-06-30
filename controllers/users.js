@@ -79,7 +79,24 @@ const Login = async (req, res) => {
 // UPDATE USER
 const UpdateDetails = async (req, res) => {
 
+    const { name, email } = req.body
+
+    try {
+        const user = await User.findByIdAndUpdate(
+            req.body._id, { name, email },
+            { new: true }) // RETURNS THE UPDATED DOCUMENT
+        
+        await user.save()
+        res.status(200).send({ status: 'Success', message: 'User details updated successfully', user })
+    
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({ status: 'Error', message: 'An error has occurred while updating user details' })
+    }
 }
+
+// RESET PASSWORD
+
 
 
 // Activate/Deactivate User
