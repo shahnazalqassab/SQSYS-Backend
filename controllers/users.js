@@ -91,7 +91,7 @@ const UpdateDetails = async (req, res) => {
     
     } catch (error) {
         console.log(error)
-        res.status(500).send({ status: 'Error', message: 'An error has occurred while updating user details' })
+        res.status(501).send({ status: 'Error', message: 'An error has occurred while updating user details' })
     }
 }
 
@@ -113,12 +113,39 @@ const ResetPassword = async (req, res) => {
     
     } catch (error) {
         console.log(error)
-        res.status(500).send({ status: 'Error', message: 'An error has occurred while resetting password' })
+        res.status(502).send({ status: 'Error', message: 'An error has occurred while resetting password' })
     }
 }
 
 
-// Activate/Deactivate User
+// CHANGE PASSWORD
+const ChangePassword = async (req, res) => {
+    const { _id, oldPassword, newPassword } = req.body 
+
+    try {
+        if ( oldPassword === newPassword ) {
+            return res.status(400).send({ status: 'Error', message: 'New password cannot be the same as old password' })
+        
+        } else {
+            if ( newPassword.length < 8 ) {
+            return res.status(401).send({ status: 'Error', message: 'New password must be at least 8 characters long' })
+            
+            } else {
+                const user = await User.findById( _id )
+
+                user.password = await middleware.passwordHashing(newPassword)
+                await user.save()
+                res.status(200).send({ status: 'Success', message: 'Password has been changed successfully' })
+            }
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(503).send({ status: 'Error', message: 'An error has occurred while changing password' })
+    }
+}
+
+
+// ACTIVATE/DEACTIVATE USER
 const ActivateDeactivate = async (req, res) => {
 
 }
