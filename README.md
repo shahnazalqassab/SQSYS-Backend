@@ -5,8 +5,8 @@
 ## Backend Technicalities
 
 -	Backend
--- Node/Express
--- CRUD APIs for all collections
+    - Node/Express
+    - CRUD APIs for all collections
 
 -	MongoDB Collections
 o	users
