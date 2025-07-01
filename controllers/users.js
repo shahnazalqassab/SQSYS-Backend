@@ -147,7 +147,18 @@ const ChangePassword = async (req, res) => {
 
 // ACTIVATE/DEACTIVATE USER
 const ActivateDeactivate = async (req, res) => {
+    const { _id, status } = req.body
 
+    try {
+        const user = await User.findByIdAndUpdate(
+            _id, { status }, { new: true })
+        
+        res.status(200).send({ status: 'Success', message: `User has been ${status}d successfully`, user })
+    
+    } catch (error) {
+        console.log(error)
+        res.status
+    }
 }
 
 
@@ -164,6 +175,7 @@ module.exports = {
     Login,
     UpdateDetails,
     ResetPassword,
+    ChangePassword,
     ActivateDeactivate,
     CheckSession
 }
