@@ -1,5 +1,6 @@
-const { Product } = require('../Models')
+const { Product, Supplier, User } = require('../Models')
 const { Category, SubCategory } = require('../Models')
+
 
 // CREATING NEW PRODUCT
 
