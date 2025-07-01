@@ -7,10 +7,10 @@ const middleware = require('../middleware')
 const GetAll = async (req, res) => {
     try {  
         const users = await User.find({})
-        res.status(200).send(users)
+        res.status(200).json(users)
     }catch (error) {
         console.error(error)
-        res.status(500).send({ status: 'Error', message: 'An error has occurred while fetching users' })
+        res.status(500).json({ status: 'Error', message: 'An error has occurred while fetching users' })
     }
 }
 
@@ -25,21 +25,21 @@ const CreateUser = async (req, res) => {
         let existingEmail = await User.findOne({ email })
 
         if (existingUser) {
-            return res.status(400).send({ status: 'Error', message: 'Username already exists' })
+            return res.status(400).json({ status: 'Error', message: 'Username already exists' })
         } else {
             if (existingEmail) {
-                return res.status(400).send({ status: 'Error', message: 'Email already exists' })
+                return res.status(400).json({ status: 'Error', message: 'Email already exists' })
             } else {
                 let encryptedPassword = await middleware.passwordHashing('12345678') 
 
                 const newUser = await User.create({
                     username, name, email, encryptedPassword, user_role, status: 'active'})
-                    res.status(200).send({status: 'Success', message: 'User has been created', newUser })
+                    res.status(200).json({status: 'Success', message: 'User has been created', newUser })
                 }
         }
     } catch (error) {
         console.log(error)
-        res.status(401).send({status: 'Error', message: 'An error has occurred while creating user' })
+        res.status(401).json({status: 'Error', message: 'An error has occurred while creating user' })
     }
 }
 
@@ -51,7 +51,7 @@ const Login = async (req, res) => {
         let user = await User.findOne({ username })
 
         if (!user) {
-            return res.status(401).send({ status: 'Error', message: 'Invalid username' })
+            return res.status(401).json({ status: 'Error', message: 'Invalid username' })
         }
         let isValid = await middleware.verifyPassword(password, user.encryptedPassword)
 
@@ -65,14 +65,14 @@ const Login = async (req, res) => {
                 status: user.status
             }
             let token = await middleware.createToken(payload)
-            return res.status(200).send({ status: 'Success', message: 'Login successful', token, user: payload })
+            return res.status(200).json({ status: 'Success', message: 'Login successful', token, user: payload })
         }
         
-        res.status(402).send({ status: 'Error', message: 'Invalid password' })
+        res.status(402).json({ status: 'Error', message: 'Invalid password' })
 
     } catch (error) {
         console.log(error)
-        res.status(401).send({ status: 'Error', message: 'An error has occurred while logging in'})
+        res.status(401).json({ status: 'Error', message: 'An error has occurred while logging in'})
     }
 }
 
@@ -87,11 +87,11 @@ const UpdateDetails = async (req, res) => {
             { new: true }) // RETURNS THE UPDATED DOCUMENT
         
         await user.save()
-        res.status(200).send({ status: 'Success', message: 'User details updated successfully', user })
+        res.status(200).json({ status: 'Success', message: 'User details updated successfully', user })
     
     } catch (error) {
         console.log(error)
-        res.status(501).send({ status: 'Error', message: 'An error has occurred while updating user details' })
+        res.status(501).json({ status: 'Error', message: 'An error has occurred while updating user details' })
     }
 }
 
@@ -109,11 +109,11 @@ const ResetPassword = async (req, res) => {
             { new: true })
         
         await user.save()
-        res.status(200).send({ status: 'Success', message: 'Password reset successfully', user })
+        res.status(200).json({ status: 'Success', message: 'Password reset successfully', user })
     
     } catch (error) {
         console.log(error)
-        res.status(502).send({ status: 'Error', message: 'An error has occurred while resetting password' })
+        res.status(502).json({ status: 'Error', message: 'An error has occurred while resetting password' })
     }
 }
 
@@ -128,24 +128,24 @@ const ChangePassword = async (req, res) => {
 
         if (isValid) {
             if ( oldPassword === newPassword ) {
-                return res.status(400).send({ status: 'Error', message: 'New password cannot be the same as old password' })
+                return res.status(400).json({ status: 'Error', message: 'New password cannot be the same as old password' })
             
             } else {
                 if ( newPassword.length < 8 ) {
-                return res.status(401).send({ status: 'Error', message: 'New password must be at least 8 characters long' })
+                return res.status(401).json({ status: 'Error', message: 'New password must be at least 8 characters long' })
                 
                 } else {
                     user.encryptedPassword = await middleware.passwordHashing(newPassword)
                     await user.save()
-                    res.status(200).send({ status: 'Success', message: 'Password has been changed successfully' })
+                    res.status(200).json({ status: 'Success', message: 'Password has been changed successfully' })
                 }
             }
         } else {
-            return res.status(402).send({ status: 'Error', message: 'Old password is incorrect' })
+            return res.status(402).json({ status: 'Error', message: 'Old password is incorrect' })
         }
     } catch (error) {
         console.log(error)
-        res.status(503).send({ status: 'Error', message: 'An error has occurred while changing password' })
+        res.status(503).json({ status: 'Error', message: 'An error has occurred while changing password' })
     }
 }
 
@@ -156,7 +156,7 @@ const ActivateDeactivate = async (req, res) => {
 
     try {
         const user = await User.findByIdAndUpdate(_id, { status }, { new: true })
-        res.status(200).send({ status: 'Success', message: `User has been ${status}d successfully`, user })
+        res.status(200).json({ status: 'Success', message: `User has been ${status}d successfully`, user })
     
     } catch (error) {
         console.log(error)
