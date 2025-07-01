@@ -20,6 +20,9 @@ const verifyPassword = async (password, dbPassword) => {
 }
 
 
+
+
+
 // CREATING JWT TOKEN
 const createToken = async (payload) => {
     let token = await jwt.sign(payload, SECRET, { expiresIn: '1h' })
@@ -42,6 +45,7 @@ const stripToken = (req, res, next) => {
         res.status(402).send({ status: 'Error', message: 'Strip Token Error!' })
     }
 }
+
 
 // VERIFYING JWT TOKEN
 const verifyToken = (req, res, next) => {

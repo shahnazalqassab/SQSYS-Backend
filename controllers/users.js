@@ -18,7 +18,7 @@ const GetAll = async (req, res) => {
 // CREATE USER
 const CreateUser = async (req, res) => {
     try {
-        const { username, name, email, password, user_role } = req.body
+        const { username, name, email, user_role } = req.body
         console.log(req.body)
 
         let existingUser = await User.findOne({ username })
@@ -30,11 +30,11 @@ const CreateUser = async (req, res) => {
             if (existingEmail) {
                 return res.status(400).send({ status: 'Error', message: 'Email already exists' })
             } else {
-                let hashedPassword = await middleware.passwordHashing(password)
+                let encryptedPassword = await middleware.passwordHashing('12345678') 
 
                 const newUser = await User.create({
-                    username, name, email, hashedPassword, user_role, status: 'active'})
-                    res.status(200).send(newUser)
+                    username, name, email, encryptedPassword, user_role, status: 'active'})
+                    res.status(200).send({status: 'Success', message: 'User has been created', newUser })
                 }
         }
     } catch (error) {
@@ -53,7 +53,7 @@ const Login = async (req, res) => {
         if (!user) {
             return res.status(401).send({ status: 'Error', message: 'Invalid username' })
         }
-        let isValid = await middleware.verifyPassword(password, user.password)
+        let isValid = await middleware.verifyPassword(password, user.encryptedPassword)
 
         if (isValid) {
             let payload = {
@@ -105,7 +105,7 @@ const ResetPassword = async (req, res) => {
         let hashedPassword = await middleware.passwordHashing(password)
 
         const user = await User.findByIdAndUpdate(
-            _id, { password: hashedPassword },
+            _id, { encryptedPassword: hashedPassword },
             { new: true })
         
         await user.save()
@@ -123,20 +123,25 @@ const ChangePassword = async (req, res) => {
     const { _id, oldPassword, newPassword } = req.body 
 
     try {
-        if ( oldPassword === newPassword ) {
-            return res.status(400).send({ status: 'Error', message: 'New password cannot be the same as old password' })
-        
-        } else {
-            if ( newPassword.length < 8 ) {
-            return res.status(401).send({ status: 'Error', message: 'New password must be at least 8 characters long' })
+        const user = await User.findById( _id )
+        let isValid = await middleware.verifyPassword(oldPassword, user.encryptedPassword)
+
+        if (isValid) {
+            if ( oldPassword === newPassword ) {
+                return res.status(400).send({ status: 'Error', message: 'New password cannot be the same as old password' })
             
             } else {
-                const user = await User.findById( _id )
-
-                user.password = await middleware.passwordHashing(newPassword)
-                await user.save()
-                res.status(200).send({ status: 'Success', message: 'Password has been changed successfully' })
+                if ( newPassword.length < 8 ) {
+                return res.status(401).send({ status: 'Error', message: 'New password must be at least 8 characters long' })
+                
+                } else {
+                    user.encryptedPassword = await middleware.passwordHashing(newPassword)
+                    await user.save()
+                    res.status(200).send({ status: 'Success', message: 'Password has been changed successfully' })
+                }
             }
+        } else {
+            return res.status(402).send({ status: 'Error', message: 'Old password is incorrect' })
         }
     } catch (error) {
         console.log(error)
@@ -150,9 +155,7 @@ const ActivateDeactivate = async (req, res) => {
     const { _id, status } = req.body
 
     try {
-        const user = await User.findByIdAndUpdate(
-            _id, { status }, { new: true })
-        
+        const user = await User.findByIdAndUpdate(_id, { status }, { new: true })
         res.status(200).send({ status: 'Success', message: `User has been ${status}d successfully`, user })
     
     } catch (error) {
