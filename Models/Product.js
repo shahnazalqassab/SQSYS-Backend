@@ -4,7 +4,7 @@ const productSchema = new Schema({
     name: { type: String, required: true },
     selling_price: { type: Number, required: true },
     cost_price: { type: Number, required: true },
-    key_features: { type: String, required: true },
+    key_features: [{ type: String, required: true }],
     status: { type: String, enum: ['in stock', ' out of stock', 'pre-order', 'discontinued', 'coming soon'], default: 'in stock' },
     quantity_available: { type: Number, required: true },
     min_balance: { type: Number, required: true },
