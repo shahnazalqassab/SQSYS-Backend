@@ -171,7 +171,6 @@ const CheckSession = async (req, res) => {
 module.exports = {
     GetAll,
     CreateUser,
-    GetUserById,
     Login,
     UpdateDetails,
     ResetPassword,

@@ -26,3 +26,45 @@ const createToken = async (payload) => {
     return token
 }
 
+
+// STRIPPING TOKEN FROM REQUEST HEADERS
+const stripToken = (req, res, next) => {
+    try {
+        const token = req.headers['authorization'].split(' ')[1]
+        if (token) {
+        res.locals.token = token
+        return next()
+        }
+        res.status(401).send({ status: 'Error', message: 'Unauthorized' })
+
+    } catch (error) {
+        console.log(error)
+        res.status(402).send({ status: 'Error', message: 'Strip Token Error!' })
+    }
+}
+
+// VERIFYING JWT TOKEN
+const verifyToken = (req, res, next) => {
+    const { token } = res.locals
+
+    try {
+        let payload = jwt.verify(token, SESSION_SECRET)
+        if (payload) {
+        res.locals.payload = payload
+        return next()
+        }
+        res.status(403).send({ status: 'Error', message: 'Unauthorized' })
+
+    } catch (error) {
+        console.log(error)
+        res.status(404).send({ status: 'Error', message: 'Verify Token Error!' })
+    }
+}
+
+module.exports = {
+    passwordHashing,
+    verifyPassword,
+    createToken,
+    stripToken,
+    verifyToken
+}
