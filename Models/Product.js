@@ -20,6 +20,8 @@ const productSchema = new Schema({
         values: [{ type: String, required: true }]
     }],
     category: { type: Schema.Types.ObjectId, ref: 'SubCategory', required: true },
+    supplier: { type: Schema.Types.ObjectId, ref: 'Supplier', required: true },
+    entered_by: { type: Schema.Types.ObjectId, ref: 'User', required: true },
 },
 {
     timestamps: true

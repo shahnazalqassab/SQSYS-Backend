@@ -1,0 +1,27 @@
+const { Supplier } = require('../Models')
+
+// CREATING NEW SUPPLIER
+
+
+
+// GETTING SUPPLIER DETAILS
+
+
+
+
+// GETTING ALL SUPPLIERS
+
+
+
+
+// GETTING SUPPLIERS BY PRODUCTS
+
+
+
+
+// UPDATING SUPPLIER DETAILS
+
+
+
+
+// DELETING SUPPLIER
