@@ -156,12 +156,71 @@ const deleteProduct = async (req, res) => {
 }
 
 // MODIFYING PRODUCT TAGS
+const modifyProductTags = async (req, res) => {
+    try {
+        const productId = req.params.id
+        const { tags } = req.body
+
+        const product = await Product.findById(productId)
+
+        if (!product) {
+            return res.status(404).json({ status: 'Not Found', message: 'Product not found' })
+        }
+        product.tags = tags
+        await product.save()
+        res.status(200).json({ status: 'Success', message: 'Product tags updated successfully', product })
+
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ status: 'Error', message: 'An error has occurred while updating product tags' })
+    }
+}
 
 
 // MODIFYING PRODUCT STATUS
+const modifyProductStatus = async (req, res) => {
+    try {
+        const productId = req.params.id
+        const { status } = req.body
+
+        const product = await Product.findById(productId)
+
+        if (!product) {
+            return res.status(404).json({ status: 'Not Found', message: 'Product not found' })
+        }
+        product.status = status 
+        await product.save()
+        res.status(200).json({ status: 'Success', message: 'Product status updated successfully', product })
+    
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ status: 'Error', message: 'An error has occurred while updating product status' })
+    }
+}
 
 
 // MODIFYING PRODUCT OPTIONS
+const modifyProductOptions = async (req, res) => {
+    try {
+        const productId = req.params.id
+        const { options } = req.body
+
+        const product = await Product.findById(productId)
+        if (!product) {
+            return res.status(404).json({ status: 'Not Found', message: 'Product not found' })
+        }
+        product.options = options
+        await product.save()
+        res.status(200).json({ status: 'Success', message: 'Product options updated successfully', product })       
+
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ status: 'Error', message: 'An error has occurred while updating product options' })
+    }
+}   
+
+
+
 
 module.exports = { 
     createProduct,
@@ -171,4 +230,9 @@ module.exports = {
     getProductsByTags,
     getProductsByStatus,
     getNewlyAddedProducts,
+    deleteProduct,
+    modifyProductTags,
+    modifyProductStatus,    
+    modifyProductOptions
+
 }

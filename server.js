@@ -30,5 +30,5 @@ app.use('/', (req, res) => {
 })
 
 app.listen(PORT, () => {
-    console.log(`Running Express is running on port ${PORT}`)
+    console.log(`Running Express is running on port ${PORT} . . .`)
 }) 
