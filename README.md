@@ -21,8 +21,7 @@
     - quotations
 
 ## Pseudo code 
-
--
+- mentioned in Trello
 
 ## Future Improvements:
 
