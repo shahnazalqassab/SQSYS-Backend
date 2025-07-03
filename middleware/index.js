@@ -21,11 +21,10 @@ const verifyPassword = async (password, dbPassword) => {
 
 
 
-
-
 // CREATING JWT TOKEN
 const createToken = async (payload) => {
-    let token = await jwt.sign(payload, SECRET, { expiresIn: '1h' })
+    // let token = await jwt.sign(payload, SECRET, { expiresIn: '1h' })
+    let token = await jwt.sign(payload, SECRET)
     return token
 }
 
@@ -42,7 +41,7 @@ const stripToken = (req, res, next) => {
 
     } catch (error) {
         console.log(error)
-        res.status(402).send({ status: 'Error', message: 'Strip Token Error!' })
+        res.status(401).send({ status: 'Error', message: 'Strip Token Error!' })
     }
 }
 
@@ -52,16 +51,16 @@ const verifyToken = (req, res, next) => {
     const { token } = res.locals
 
     try {
-        let payload = jwt.verify(token, SESSION_SECRET)
+        let payload = jwt.verify(token, SECRET)
         if (payload) {
         res.locals.payload = payload
         return next()
         }
-        res.status(403).send({ status: 'Error', message: 'Unauthorized' })
+        res.status(401).send({ status: 'Error', message: 'Unauthorized' })
 
     } catch (error) {
         console.log(error)
-        res.status(404).send({ status: 'Error', message: 'Verify Token Error!' })
+        res.status(401).send({ status: 'Error', message: 'Verify Token Error!' })
     }
 }
 

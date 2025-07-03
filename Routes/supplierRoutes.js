@@ -6,7 +6,7 @@ router.get('/', controller.getAllSuppliers)
 router.get('/:id', controller.getSupplier) // middleware.verifyToken, middleware.stripToken, 
 router.get('/:id/product', controller.getSuppliersByProduct) // middleware.verifyToken, middleware.stripToken,
 
-router.post('/', controller.createSupplier)
+router.post('/create', controller.createSupplier)
 router.put('/:id', controller.updateSupplier)
 router.delete('/:id', controller.deleteSupplier)
 

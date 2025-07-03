@@ -79,11 +79,11 @@ const Login = async (req, res) => {
 // UPDATE USER
 const UpdateDetails = async (req, res) => {
 
-    const { _id, name, email } = req.body
+    const { username, name, email } = req.body
 
     try {
-        const user = await User.findByIdAndUpdate(
-            _id , { name, email },
+        const user = await User.findOneAndUpdate(
+            { username } , { name, email },
             { new: true }) // RETURNS THE UPDATED DOCUMENT
         
         await user.save()
