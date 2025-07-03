@@ -34,7 +34,7 @@ const CreateUser = async (req, res) => {
 
                 const newUser = await User.create({
                     username, name, email, encryptedPassword, user_role, status: 'active'})
-                    res.status(200).json({status: 'Success', message: 'User has been created', newUser })
+                    return res.status(200).json({ status: 'Success', message: 'User has been created', user: newUser })
                 }
         }
     } catch (error) {
@@ -78,17 +78,23 @@ const Login = async (req, res) => {
 
 // UPDATE USER
 const UpdateDetails = async (req, res) => {
-
-    const { username, name, email } = req.body
+    console.log(req.body)
+    const { id } = req.body
 
     try {
-        const user = await User.findOneAndUpdate(
-            { username } , { name, email },
-            { new: true }) // RETURNS THE UPDATED DOCUMENT
-        
-        await user.save()
-        res.status(200).json({ status: 'Success', message: 'User details updated successfully', user })
-    
+        const user = await User.findById(id)
+        console.log(user)
+
+        if (!user) {
+            return res.status(404).json({ status: 'Error', message: 'User not found' })
+        }
+
+        user.name = req.body.data.name
+        user.email = req.body.data.email
+
+        user.save()
+        console.log(user)
+        return res.status(200).json({ status: 'Success', message: 'User has been updated', user: user })
     } catch (error) {
         console.log(error)
         res.status(501).json({ status: 'Error', message: 'An error has occurred while updating user details' })
@@ -97,18 +103,17 @@ const UpdateDetails = async (req, res) => {
 
 // RESET PASSWORD
 const ResetPassword = async (req, res) => {
-    const { _id } = req.body
+    const { id } = req.body
     
     const password = "12345678"
 
     try {
         let hashedPassword = await middleware.passwordHashing(password)
 
-        const user = await User.findByIdAndUpdate(
-            _id, { encryptedPassword: hashedPassword },
-            { new: true })
+        const user = await User.findById(id)
         
-        await user.save()
+        user.encryptedPassword = hashedPassword
+        user.save()
         res.status(200).json({ status: 'Success', message: 'Password reset successfully', user })
     
     } catch (error) {
@@ -120,10 +125,10 @@ const ResetPassword = async (req, res) => {
 
 // CHANGE PASSWORD
 const ChangePassword = async (req, res) => {
-    const { _id, oldPassword, newPassword } = req.body 
+    const { id, oldPassword, newPassword } = req.body 
 
     try {
-        const user = await User.findById( _id )
+        const user = await User.findById( id )
         let isValid = await middleware.verifyPassword(oldPassword, user.encryptedPassword)
 
         if (isValid) {
@@ -152,15 +157,37 @@ const ChangePassword = async (req, res) => {
 
 // ACTIVATE/DEACTIVATE USER
 const ActivateDeactivate = async (req, res) => {
-    const { _id, status } = req.body
+    console.log(req.body)
+    const { id, status } = req.body
 
     try {
-        const user = await User.findByIdAndUpdate(_id, { status }, { new: true })
-        res.status(200).json({ status: 'Success', message: `User has been ${status}d successfully`, user })
+        const user = await User.findById(id)
+        
+        user.status = req.body.data.status 
+
+        user.save()
+        return res.status(200).json({ status: 'Success', message: `User has been ${status}d successfully`, user: user })
     
     } catch (error) {
         console.log(error)
         res.status
+    }
+}
+
+const DeleteUser = async (req, res) => {
+    const { id } = req.body
+
+    try {
+        const user = await User.findById(id)
+        if (!user) {
+            return res.status(404).json({ status: 'Error', message: 'User not found' })
+        }
+
+        await user.deleteOne()
+        res.status(200).json({ status: 'Success', message: 'User has been deleted successfully', user })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ status: 'Error', message: 'An error has occurred while deleting user' })
     }
 }
 
@@ -179,5 +206,6 @@ module.exports = {
     ResetPassword,
     ChangePassword,
     ActivateDeactivate,
-    CheckSession
+    CheckSession,
+    DeleteUser
 }

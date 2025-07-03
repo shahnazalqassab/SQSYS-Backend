@@ -32,13 +32,15 @@ const createToken = async (payload) => {
 // STRIPPING TOKEN FROM REQUEST HEADERS
 const stripToken = (req, res, next) => {
     try {
-        const token = req.headers['authorization'].split(' ')[1]
-        if (token) {
-        res.locals.token = token
-        return next()
+        const authHeader = req.headers['authorization']
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            const token = authHeader.split(' ')[1]
+            if (token && token.split('.').length === 3) { //  token format check
+                res.locals.token = token
+                return next()
+            }
         }
-        res.status(401).send({ status: 'Error', message: 'Unauthorized' })
-
+        res.status(401).send({ status: 'Error', message: 'Unauthorized: No or malformed token' })
     } catch (error) {
         console.log(error)
         res.status(401).send({ status: 'Error', message: 'Strip Token Error!' })
@@ -50,17 +52,18 @@ const stripToken = (req, res, next) => {
 const verifyToken = (req, res, next) => {
     const { token } = res.locals
 
+    if (!token) {
+        return res.status(401).send({ status: 'Error', message: 'No token provided' })
+    }
+
     try {
+        console.log('Verifying token:', token)
         let payload = jwt.verify(token, SECRET)
-        if (payload) {
         res.locals.payload = payload
         return next()
-        }
-        res.status(401).send({ status: 'Error', message: 'Unauthorized' })
-
     } catch (error) {
         console.log(error)
-        res.status(401).send({ status: 'Error', message: 'Verify Token Error!' })
+        return res.status(401).send({ status: 'Error', message: 'Invalid or expired token!' })
     }
 }
 
