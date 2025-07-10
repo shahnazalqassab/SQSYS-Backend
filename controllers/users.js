@@ -184,7 +184,7 @@ const DeleteUser = async (req, res) => {
         }
 
         await user.deleteOne()
-        res.status(200).json({ status: 'Success', message: 'User has been deleted successfully', user })
+        return res.status(200).json({ status: 'Success', message: 'User has been deleted successfully', user })
     } catch (error) {
         console.log(error)
         res.status(500).json({ status: 'Error', message: 'An error has occurred while deleting user' })
