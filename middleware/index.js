@@ -25,14 +25,14 @@ const verifyPassword = async (password, dbPassword) => {
 const createToken = async (payload) => {
     // let token = await jwt.sign(payload, SECRET, { expiresIn: '1h' })
     let token = await jwt.sign(payload, SECRET)
-    console.log(token)
+    // console.log(token)
     return token
 }
 
 
 // STRIPPING TOKEN FROM REQUEST HEADERS
 const stripToken = (req, res, next) => {
-    console.log('Authorization header:', req.headers['authorization'])
+    // console.log(req.headers)
     try {
         const token = req.headers['authorization'].split(' ')[1]
         
@@ -51,7 +51,7 @@ const stripToken = (req, res, next) => {
 
 // VERIFYING JWT TOKEN
 const verifyToken = (req, res, next) => {
-    console.log(res.locals)
+    // console.log(res.locals)
     const { token } = res.locals
 
     try {

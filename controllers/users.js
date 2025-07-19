@@ -175,6 +175,7 @@ const ActivateDeactivate = async (req, res) => {
 }
 
 const DeleteUser = async (req, res) => {
+    console.log(req.body)
     const { id } = req.body
 
     try {
