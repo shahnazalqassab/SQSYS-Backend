@@ -14,7 +14,7 @@ router.put('/users/edit', middleware.stripToken, middleware.verifyToken, control
 router.patch('/activate-deactivate', middleware.stripToken, middleware.verifyToken, controller.ActivateDeactivate)
 
 router.get('/session', middleware.stripToken, middleware.verifyToken, controller.CheckSession)
-router.delete('/:id/users', middleware.stripToken, middleware.verifyToken, controller.DeleteUser)
+router.delete('/:id/users/:deletedUser', middleware.stripToken, middleware.verifyToken, controller.DeleteUser)
 
 
 module.exports = router

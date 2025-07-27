@@ -175,14 +175,19 @@ const ActivateDeactivate = async (req, res) => {
 }
 
 const DeleteUser = async (req, res) => {
-    console.log(res)
+    console.log(req.params)
+    const { deletedUser } = req.params
 
     try {
-        const user = await User.findById(id)
+        const user = await User.findById(deletedUser)
         if (!user) {
             return res.status(404).json({ status: 'Error', message: 'User not found' })
         }
 
+        if (user.user_role === "admin"){
+            return res.status(500).json({ status: 'Failed', message: 'admins cannot be deleted' })
+        }
+        
         await user.deleteOne()
         return res.status(200).json({ status: 'Success', message: 'User has been deleted successfully', user })
     } catch (error) {
